@@ -5,6 +5,22 @@ type UnauthorizedHandler = () => void
 
 let unauthorizedHandler: UnauthorizedHandler | undefined
 
+export const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api',
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+})
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('kanbot_token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
 export class ApiError extends Error {
   readonly status: number
   readonly code: ErrorCode | 'NETWORK_ERROR'
@@ -37,19 +53,10 @@ export async function request<T>(
   path: string,
   body?: unknown,
 ): Promise<T | undefined> {
-  const token = localStorage.getItem('kanbot_token')
-  const headers: Record<string, string> = { Accept: 'application/json' }
-
-  if (token) {
-    headers.Authorization = `Bearer ${token}`
-  }
-
   try {
-    const response = await axios.request<T>({
-      baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api',
+    const response = await apiClient.request<T>({
       method,
       url: path,
-      headers: body === undefined ? headers : { ...headers, 'Content-Type': 'application/json' },
       data: body,
     })
 

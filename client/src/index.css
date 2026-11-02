@@ -1,12 +1,64 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--kanbot-font-sans);
+  --color-background: var(--kanbot-background);
+  --color-surface: var(--kanbot-surface);
+  --color-primary: var(--kanbot-primary);
+  --color-primary-foreground: var(--kanbot-primary-foreground);
+  --color-secondary: var(--kanbot-secondary);
+  --color-foreground: var(--kanbot-foreground);
+  --color-muted-foreground: var(--kanbot-muted-foreground);
+  --color-border: var(--kanbot-border);
+  --color-success: var(--kanbot-success);
+  --color-warning: var(--kanbot-warning);
+  --color-destructive: var(--kanbot-destructive);
+  --color-input: var(--kanbot-input);
+  --color-ring: var(--kanbot-ring);
+  --color-primary-hover: var(--kanbot-primary-hover);
+  --color-secondary-hover: var(--kanbot-secondary-hover);
+  --color-disabled: var(--kanbot-disabled);
+}
+
 :root {
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #172033;
-  background: #f7f8fb;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+  --kanbot-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --kanbot-background: #f8fafc;
+  --kanbot-surface: #ffffff;
+  --kanbot-primary: #4f46e5;
+  --kanbot-primary-foreground: #ffffff;
+  --kanbot-secondary: #22c55e;
+  --kanbot-foreground: #111827;
+  --kanbot-muted-foreground: #64748b;
+  --kanbot-border: #e2e8f0;
+  --kanbot-success: #16a34a;
+  --kanbot-warning: #d97706;
+  --kanbot-destructive: #dc2626;
+  --kanbot-input: #ffffff;
+  --kanbot-ring: #818cf8;
+  --kanbot-primary-hover: #4338ca;
+  --kanbot-secondary-hover: #16a34a;
+  --kanbot-disabled: #cbd5e1;
+}
+
+:root.dark {
+  --kanbot-background: #0b1020;
+  --kanbot-surface: #111827;
+  --kanbot-primary: #6366f1;
+  --kanbot-primary-foreground: #ffffff;
+  --kanbot-secondary: #22c55e;
+  --kanbot-foreground: #f9fafb;
+  --kanbot-muted-foreground: #9ca3af;
+  --kanbot-border: #374151;
+  --kanbot-success: #22c55e;
+  --kanbot-warning: #f59e0b;
+  --kanbot-destructive: #f87171;
+  --kanbot-input: #1f2937;
+  --kanbot-ring: #818cf8;
+  --kanbot-primary-hover: #818cf8;
+  --kanbot-secondary-hover: #4ade80;
+  --kanbot-disabled: #4b5563;
 }
 
 * {
@@ -21,6 +73,36 @@ body,
   margin: 0;
 }
 
+html {
+  background: var(--kanbot-background);
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
 body {
   min-height: 100vh;
+  background: var(--kanbot-background);
+  color: var(--kanbot-foreground);
+  font-family: var(--kanbot-font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+a,
+input {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--kanbot-primary) 22%, transparent);
 }

@@ -6,10 +6,11 @@ export function ProtectedRoute() {
   const location = useLocation()
 
   if (isLoading) {
-    return null
+    return <FullPageLoader />
   }
   if (!user) {
-    return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />
+    const redirect = `${location.pathname}${location.search}`
+    return <Navigate to={`/login?redirect=${encodeURIComponent(redirect)}`} replace />
   }
   return <Outlet />
 }
@@ -18,7 +19,18 @@ export function GuestRoute() {
   const { isLoading, user } = useAuth()
 
   if (isLoading) {
-    return null
+    return <FullPageLoader />
   }
   return user ? <Navigate to="/projects" replace /> : <Outlet />
+}
+
+function FullPageLoader() {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex items-center gap-3 text-sm font-semibold text-foreground">
+        <span className="h-5 w-5 animate-spin rounded-full border-2 border-border border-t-primary" />
+        Checking your session…
+      </div>
+    </main>
+  )
 }
