@@ -1,12 +1,13 @@
-import { Navigate, createBrowserRouter } from 'react-router'
+import { Navigate, Outlet, createBrowserRouter } from 'react-router'
 import { GuestRoute, ProtectedRoute } from './features/auth/RouteGuards'
 import { LoginPage, RegisterPage } from './features/auth/AuthForms'
 import { LandingPage } from './features/landing/LandingPage'
 import { AppShell, RoutePlaceholder } from './router-elements'
+import { ProjectsPage } from './features/projects/ProjectsPage'
 
 export const router = createBrowserRouter([
   {
-    element: <AppShell />,
+    element: <Outlet />,
     children: [
       {
         element: <GuestRoute />,
@@ -19,12 +20,17 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [
-          { path: '/projects', element: <RoutePlaceholder /> },
-          { path: '/projects/:projectId', element: <Navigate to="backlog" replace /> },
-          { path: '/projects/:projectId/backlog', element: <RoutePlaceholder /> },
-          { path: '/projects/:projectId/board', element: <RoutePlaceholder /> },
-          { path: '/projects/:projectId/sprints', element: <RoutePlaceholder /> },
-          { path: '/projects/:projectId/sprints/:sprintId', element: <RoutePlaceholder /> },
+          {
+            element: <AppShell />,
+            children: [
+              { path: '/projects', element: <ProjectsPage /> },
+              { path: '/projects/:projectId', element: <Navigate to="backlog" replace /> },
+              { path: '/projects/:projectId/backlog', element: <RoutePlaceholder /> },
+              { path: '/projects/:projectId/board', element: <RoutePlaceholder /> },
+              { path: '/projects/:projectId/sprints', element: <RoutePlaceholder /> },
+              { path: '/projects/:projectId/sprints/:sprintId', element: <RoutePlaceholder /> },
+            ],
+          },
         ],
       },
       { path: '*', element: <RoutePlaceholder /> },

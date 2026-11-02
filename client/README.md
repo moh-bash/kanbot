@@ -41,6 +41,12 @@ preference is stored in `localStorage` under `kanbot_theme`, follows the system
 preference by default, and is exposed through `useTheme`. Use `ThemeToggle`
 for a consistent accessible theme selector.
 
+Project management uses TanStack Query keys `['projects']` and
+`['project', projectId]`. Project CRUD lives in `src/api/projects.ts` and
+`src/hooks/useProjects.ts`; pages and dialogs consume those hooks without
+duplicating server data in local state. The authenticated project workspace
+shell is ready for Backlog, Board, and Sprints navigation.
+
 Feature pages are intentionally not implemented yet. The current scaffold
 establishes the API boundary, typed backend contract, route table, auth
 provider, query provider, and reusable theme foundation.
