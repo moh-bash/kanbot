@@ -1,75 +1,30 @@
-# React + TypeScript + Vite
+# Kanbot client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend is a React 19 + TypeScript application built with Vite.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+The API base URL defaults to `http://localhost:4000/api`. Override it with
+`VITE_API_URL` in a local `.env` file.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Architecture choices
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **React Router** owns the route table and guest/private route guards.
+- **TanStack Query** is reserved for server state and cache invalidation.
+- **React Hook Form + Zod** will provide typed form state and validation.
+- **dnd-kit** will provide accessible keyboard and pointer drag-and-drop.
+- **react-markdown** will render AI responses without enabling raw HTML.
+- **date-fns** will handle date formatting and comparisons.
+- **Tailwind CSS** is available through the Vite plugin; foundational styles
+  remain in `src/index.css` until the design system is built.
+- **lucide-react** provides the icon set without introducing a larger UI
+  component library.
 
-```
+Feature pages are intentionally not implemented yet. The current scaffold
+establishes the API boundary, typed backend contract, route table, auth
+provider, and query provider for the implementation phases that follow.
