@@ -25,6 +25,22 @@ The API base URL defaults to `http://localhost:4000/api`. Override it with
 - **lucide-react** provides the icon set without introducing a larger UI
   component library.
 
+## Design system
+
+Kanbot uses Inter with system fallbacks and a semantic token system defined in
+`src/index.css`. The brand palette is Indigo `#4F46E5`, Green `#22C55E`, and
+Dark Navy `#111827`.
+
+Use semantic Tailwind utilities such as `bg-background`, `bg-surface`,
+`text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`,
+`bg-secondary`, `text-destructive`, and `ring-ring` instead of hardcoded
+colors. Tokens automatically switch between light and dark themes.
+
+`ThemeProvider` supports `light`, `dark`, and `system` preferences. The
+preference is stored in `localStorage` under `kanbot_theme`, follows the system
+preference by default, and is exposed through `useTheme`. Use `ThemeToggle`
+for a consistent accessible theme selector.
+
 Feature pages are intentionally not implemented yet. The current scaffold
 establishes the API boundary, typed backend contract, route table, auth
-provider, and query provider for the implementation phases that follow.
+provider, query provider, and reusable theme foundation.

@@ -1,5 +1,7 @@
 import { Navigate, createBrowserRouter } from 'react-router'
 import { GuestRoute, ProtectedRoute } from './features/auth/RouteGuards'
+import { LoginPage, RegisterPage } from './features/auth/AuthForms'
+import { LandingPage } from './features/landing/LandingPage'
 import { AppShell, RoutePlaceholder } from './router-elements'
 
 export const router = createBrowserRouter([
@@ -9,14 +11,14 @@ export const router = createBrowserRouter([
       {
         element: <GuestRoute />,
         children: [
-          { path: '/login', element: <RoutePlaceholder /> },
-          { path: '/register', element: <RoutePlaceholder /> },
+          { path: '/', element: <LandingPage /> },
+          { path: '/login', element: <LoginPage /> },
+          { path: '/register', element: <RegisterPage /> },
         ],
       },
       {
         element: <ProtectedRoute />,
         children: [
-          { path: '/', element: <Navigate to="/projects" replace /> },
           { path: '/projects', element: <RoutePlaceholder /> },
           { path: '/projects/:projectId', element: <Navigate to="backlog" replace /> },
           { path: '/projects/:projectId/backlog', element: <RoutePlaceholder /> },

@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState, useCallback, type ReactNode } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useCallback, useEffect, type ReactNode } from 'react'
 import type { QueryClient } from '@tanstack/react-query'
 import { me } from '../../api/auth'
 import { setUnauthorizedHandler } from '../../api/client'
 import { AuthContext } from './auth-context'
-import type { User } from '../../types/api'
+import { useAuthStore } from './auth-store'
 
 interface AuthProviderProps {
   children: ReactNode
@@ -11,45 +12,56 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children, queryClient }: AuthProviderProps) {
-  const [token, setToken] = useState(() => localStorage.getItem('kanbot_token'))
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(Boolean(token))
+  const token = useAuthStore((state) => state.token)
+  const user = useAuthStore((state) => state.user)
+  const setSession = useAuthStore((state) => state.setSession)
+  const clearSession = useAuthStore((state) => state.clearSession)
+  const sessionQuery = useQuery({
+    queryKey: ['auth', 'me'],
+    queryFn: me,
+    enabled: Boolean(token),
+    retry: false,
+  })
 
   const logout = useCallback(() => {
-    localStorage.removeItem('kanbot_token')
-    setToken(null)
-    setUser(null)
+    clearSession()
     queryClient.clear()
-  }, [queryClient])
+    window.location.assign('/login')
+  }, [clearSession, queryClient])
+
+  const handleUnauthorized = useCallback(() => {
+    clearSession()
+    queryClient.clear()
+    const redirect = `${window.location.pathname}${window.location.search}`
+    window.location.assign(
+      `/login?redirect=${encodeURIComponent(redirect)}&message=session-expired`,
+    )
+  }, [clearSession, queryClient])
 
   useEffect(() => {
-    setUnauthorizedHandler(logout)
+    setUnauthorizedHandler(handleUnauthorized)
     return () => setUnauthorizedHandler(undefined)
-  }, [logout])
+  }, [handleUnauthorized])
 
   useEffect(() => {
-    if (!token) return
+    if (sessionQuery.data?.user) {
+      useAuthStore.setState({ user: sessionQuery.data.user })
+    }
+  }, [sessionQuery.data])
 
-    me()
-      .then((response) => setUser(response?.user ?? null))
-      .catch(() => logout())
-      .finally(() => setIsLoading(false))
-  }, [logout, token])
+  useEffect(() => {
+    if (sessionQuery.isError) {
+      logout()
+    }
+  }, [logout, sessionQuery.isError])
 
-  const value = useMemo(
-    () => ({
-      isLoading,
-      token,
-      user,
-      setSession: (nextToken: string, nextUser: User) => {
-        localStorage.setItem('kanbot_token', nextToken)
-        setToken(nextToken)
-        setUser(nextUser)
-      },
-      logout,
-    }),
-    [isLoading, logout, token, user],
-  )
+  const value = {
+    isLoading: Boolean(token) && sessionQuery.isPending,
+    token,
+    user: user ?? sessionQuery.data?.user ?? null,
+    setSession,
+    logout,
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
