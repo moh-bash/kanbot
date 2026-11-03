@@ -50,12 +50,28 @@ export function TodoDetailsPanel({ todo, onClose, onDeleted }: TodoDetailsPanelP
   }, [currentTodo, form])
 
   const requestClose = () => {
-    if (form.formState.isDirty) {
+    const hasValueChanges = JSON.stringify(form.getValues()) !== JSON.stringify(toFormValues(currentTodo))
+    if (form.formState.isDirty || hasValueChanges) {
       setDiscardOpen(true)
     } else {
       onClose()
     }
   }
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      if (deleteOpen) {
+        setDeleteOpen(false)
+      } else if (discardOpen) {
+        setDiscardOpen(false)
+      } else {
+        requestClose()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  })
 
   const onSubmit = form.handleSubmit(async (values) => {
     try {

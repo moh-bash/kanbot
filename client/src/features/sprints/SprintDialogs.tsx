@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LoaderCircle, Pencil, Play, Trash2, X } from 'lucide-react'
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { z } from 'zod'
@@ -84,7 +84,16 @@ function DateFields({ form }: { form: ReturnType<typeof useForm<SprintValues>> }
   return <div className="grid gap-4 sm:grid-cols-2"><Field label="Start date" error={form.formState.errors.startDate?.message}><input type="date" className={inputClass} {...form.register('startDate')} /></Field><Field label="End date" error={form.formState.errors.endDate?.message}><input type="date" className={inputClass} {...form.register('endDate')} /></Field></div>
 }
 function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) { return <label className="block text-sm font-bold text-foreground">{label}{children}{error && <span className="mt-2 block text-xs font-semibold text-destructive">{error}</span>}</label> }
-function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) { return <div className={modalClass}><div role="dialog" aria-modal="true" className="w-full max-w-lg rounded-2xl border border-border bg-surface p-6 shadow-2xl"><div className="mb-6 flex items-center justify-between"><h2 className="text-xl font-extrabold text-foreground">{title}</h2><button type="button" aria-label="Close dialog" onClick={onClose} className="cursor-pointer rounded-lg p-2 text-muted-foreground hover:bg-background"><X className="h-5 w-5" /></button></div>{children}</div></div> }
+function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+  return <div className={modalClass}><div role="dialog" aria-modal="true" className="w-full max-w-lg rounded-2xl border border-border bg-surface p-6 shadow-2xl"><div className="mb-6 flex items-center justify-between"><h2 className="text-xl font-extrabold text-foreground">{title}</h2><button type="button" aria-label="Close dialog" onClick={onClose} className="cursor-pointer rounded-lg p-2 text-muted-foreground hover:bg-background"><X className="h-5 w-5" /></button></div>{children}</div></div>
+}
 function DialogActions({ pending, disabled = false, onCancel, onConfirm, label, destructive = false }: { pending: boolean; disabled?: boolean; onCancel: () => void; onConfirm?: () => void; label: string; destructive?: boolean }) { return <div className="mt-6 flex justify-end gap-3"><button type="button" onClick={onCancel} className="h-10 cursor-pointer rounded-xl border border-border px-4 text-sm font-bold text-foreground">Cancel</button><button type={onConfirm ? 'button' : 'submit'} onClick={onConfirm} disabled={pending || disabled} className={`inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl px-4 text-sm font-extrabold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60 ${destructive ? 'bg-destructive' : 'bg-primary'}`}>{pending && <LoaderCircle className="h-4 w-4 animate-spin" />}{label}</button></div> }
 function Metric({ label, value }: { label: string; value: number }) { return <div className="rounded-xl border border-border bg-background p-3"><p className="text-lg font-extrabold text-foreground">{value}</p><p className="text-xs font-semibold text-muted-foreground">{label}</p></div> }
 function applyErrors(error: unknown, form: { setError: (name: keyof SprintValues, error: { type: string; message: string }) => void }) { if (error instanceof ApiError) Object.entries(fieldErrors(error)).forEach(([name, message]) => { if (name in sprintSchema.shape) form.setError(name as keyof SprintValues, { type: 'server', message }) }) }

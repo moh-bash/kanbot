@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, useParams } from 'react-router'
+import { Link, Outlet, useLocation, useNavigate, useParams } from 'react-router'
 import { Bot, LayoutDashboard, ListChecks, LogOut, PanelsTopLeft, Rows3 } from 'lucide-react'
 import { useAuth } from './features/auth/useAuth'
 import { useTheme } from './theme/useTheme'
@@ -14,6 +14,7 @@ export function AppShell() {
   const { projectId } = useParams()
   const { user, logout } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
   const { resolvedTheme } = useTheme()
   const [aiOpen, setAiOpen] = useState(false)
   const [aiDialog, setAiDialog] = useState<'todos' | 'sprint' | null>(null)
@@ -44,9 +45,12 @@ export function AppShell() {
           <div className="flex items-center gap-3"><PanelsTopLeft className="h-5 w-5 text-primary" aria-hidden="true" /><div><p className="text-sm font-extrabold text-foreground">{inProject ? 'Project workspace' : 'Projects'}</p><p className="hidden text-xs text-muted-foreground sm:block">{inProject ? 'Plan, prioritize, and make progress.' : 'Your personal workspaces.'}</p></div></div>
           <div className="flex items-center gap-3">{inProject && <button type="button" onClick={() => setAiOpen(true)} className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary/10 px-3 text-xs font-extrabold text-primary hover:bg-primary/15"><Bot className="h-4 w-4" /> Ask AI</button>}<ThemeToggle /><button type="button" onClick={logout} className="cursor-pointer rounded-lg p-2 text-muted-foreground hover:bg-background hover:text-foreground lg:hidden" aria-label="Log out"><LogOut className="h-4 w-4" /></button><span className="hidden text-xs text-muted-foreground sm:inline">{resolvedTheme === 'dark' ? 'Dark mode' : 'Light mode'}</span></div>
         </header>
+        {inProject && <nav className="flex gap-1 overflow-x-auto border-b border-border bg-surface px-5 py-2 lg:hidden" aria-label="Project navigation">
+          {navItems.map(({ label, icon: Icon, to }) => <Link key={to} to={to} className={`inline-flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm font-bold ${location.pathname === to ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-background hover:text-foreground'}`}><Icon className="h-4 w-4" aria-hidden="true" />{label}</Link>)}
+        </nav>}
         <main><Outlet /></main>
       </div>
-      {projectId && aiOpen && <AIAssistantDrawer key={projectId} projectId={projectId} onClose={() => setAiOpen(false)} onGenerateTodos={() => { setAiOpen(false); setAiDialog('todos') }} onPlanSprint={() => { setAiOpen(false); setAiDialog('sprint') }} />}
+      {projectId && aiOpen && <AIAssistantDrawer key={projectId} projectId={projectId} onClose={() => setAiOpen(false)} onGenerateTodos={() => { setAiOpen(false); setAiDialog('todos') }} onPlanSprint={() => { setAiOpen(false); setAiDialog('sprint') }} onSummarizeSprint={() => { setAiOpen(false); navigate(`/projects/${projectId}/board`) }} />}
       {projectId && aiDialog === 'todos' && <GenerateTodosDialog projectId={projectId} onClose={() => setAiDialog(null)} />}
       {projectId && aiDialog === 'sprint' && <PlanSprintDialog projectId={projectId} onClose={() => setAiDialog(null)} />}
     </div>
@@ -54,5 +58,14 @@ export function AppShell() {
 }
 
 export function RoutePlaceholder() {
-  return null
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background px-5 text-center text-foreground">
+      <div>
+        <p className="text-sm font-extrabold text-primary">404</p>
+        <h1 className="mt-2 text-3xl font-extrabold tracking-tight">Page not found</h1>
+        <p className="mt-3 text-sm text-muted-foreground">That page does not exist or has moved.</p>
+        <Link to="/" className="mt-6 inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-extrabold text-primary-foreground hover:bg-primary-hover">Go home</Link>
+      </div>
+    </main>
+  )
 }

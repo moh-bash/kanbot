@@ -74,6 +74,7 @@ export function useMoveTodo(projectId: string, query: TodoListQuery) {
       if (previous && body.sprintId === undefined && body.status === undefined) {
         const todos = [...previous.todos]
         const index = todos.findIndex((todo) => todo.id === todoId)
+        if (index < 0) return { previous }
         const [todo] = todos.splice(index, 1)
         todos.splice(Math.max(0, Math.min(body.position, todos.length)), 0, todo)
         queryClient.setQueryData(key, { todos: todos.map((item, order) => ({ ...item, order })) })

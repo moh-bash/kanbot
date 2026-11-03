@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, type ReactNode } from 'react'
 import type { QueryClient } from '@tanstack/react-query'
 import { me } from '../../api/auth'
-import { setUnauthorizedHandler } from '../../api/client'
+import { ApiError, setUnauthorizedHandler } from '../../api/client'
 import { AuthContext } from './auth-context'
 import { useAuthStore } from './auth-store'
 
@@ -50,10 +50,10 @@ export function AuthProvider({ children, queryClient }: AuthProviderProps) {
   }, [sessionQuery.data])
 
   useEffect(() => {
-    if (sessionQuery.isError) {
+    if (sessionQuery.error instanceof ApiError && sessionQuery.error.status === 401) {
       logout()
     }
-  }, [logout, sessionQuery.isError])
+  }, [logout, sessionQuery.error])
 
   const value = {
     isLoading: Boolean(token) && sessionQuery.isPending,

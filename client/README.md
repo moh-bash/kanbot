@@ -1,57 +1,63 @@
 # Kanbot client
 
-The frontend is a React 19 + TypeScript application built with Vite.
+Kanbot is a React 19 + TypeScript frontend for turning a backlog into focused
+sprints with an AI teammate.
 
-## Development
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-The API base URL defaults to `http://localhost:4000/api`. Override it with
-`VITE_API_URL` in a local `.env` file.
+The API defaults to `http://localhost:4000/api`. Set `VITE_API_URL` in
+`.env` to use another backend. Production checks are:
 
-## Architecture choices
+```bash
+npm run lint
+npm run build
+```
 
-- **React Router** owns the route table and guest/private route guards.
-- **TanStack Query** is reserved for server state and cache invalidation.
-- **React Hook Form + Zod** will provide typed form state and validation.
-- **dnd-kit** will provide accessible keyboard and pointer drag-and-drop.
-- AI responses use a small safe Markdown renderer that treats response text as
-  text and never renders raw HTML.
-- **Tailwind CSS** is available through the Vite plugin; foundational styles
-  remain in `src/index.css` until the design system is built.
-- **lucide-react** provides the icon set without introducing a larger UI
-  component library.
+## Architecture
 
-## Design system
+- React Router owns public/private routes and redirect guards.
+- TanStack Query owns server state, cache invalidation, and optimistic moves.
+- Zustand stores only the JWT session and small UI stores such as toasts.
+- React Hook Form and Zod provide typed form validation.
+- `src/api/` is the only request layer and `src/types/api.ts` is the API
+  contract source of truth.
+- dnd-kit provides pointer and keyboard drag-and-drop. Every move also has a
+  status or position menu alternative.
+- AI Markdown is rendered with `react-markdown`, GFM, and syntax highlighting
+  without enabling raw HTML.
 
-Kanbot uses Inter with system fallbacks and a semantic token system defined in
-`src/index.css`. The brand palette is Indigo `#4F46E5`, Green `#22C55E`, and
-Dark Navy `#111827`.
+## Design direction
 
-Use semantic Tailwind utilities such as `bg-background`, `bg-surface`,
-`text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`,
-`bg-secondary`, `text-destructive`, and `ring-ring` instead of hardcoded
-colors. Tokens automatically switch between light and dark themes.
+Kanbot uses a quiet, high-contrast workspace visual language: indigo
+`#4F46E5` for navigation and action, green `#22C55E` for progress, and dark
+navy `#111827` for the brand anchor. Semantic tokens in `src/index.css`
+support light, dark, and system themes. The landing page uses a left-aligned
+product promise, a real interface preview, and a three-step workflow instead
+of generic feature-card marketing.
 
-`ThemeProvider` supports `light`, `dark`, and `system` preferences. The
-preference is stored in `localStorage` under `kanbot_theme`, follows the system
-preference by default, and is exposed through `useTheme`. Use `ThemeToggle`
-for a consistent accessible theme selector.
+The application shell keeps the project context and primary navigation stable.
+At tablet widths the sidebar becomes a compact horizontal navigation, while
+boards retain intentional horizontal scrolling. Focus rings, reduced-motion
+support, loading states, empty states, retry states, and destructive
+confirmations are part of the shared interaction language.
 
-Project management uses TanStack Query keys `['projects']` and
-`['project', projectId]`. Project CRUD lives in `src/api/projects.ts` and
-`src/hooks/useProjects.ts`; pages and dialogs consume those hooks without
-duplicating server data in local state. The authenticated project workspace
-shell includes Backlog, Board, and Sprints navigation.
+## Included functionality
 
-AI features live in `src/features/ai/AIComponents.tsx`, with API functions in
-`src/api/ai.ts` and mutations/query state in `src/hooks/useAI.ts`. The Ask AI
-drawer keeps stateless chat history in memory, resets when its project changes,
-and sends the complete conversation on every request. Generated todos and
-planned sprints remain editable drafts until the user explicitly confirms
-saving. AI status is cached indefinitely through the `['ai', 'status']` query.
-Sprint summaries can be generated or regenerated for active and completed
-sprints; planned sprints are excluded.
+Authentication, session persistence, protected routes, project CRUD, project
+switching, backlog search and filters, quick todo creation, todo details and
+deletion, sprint planning and history, active sprint board movement, AI chat,
+AI todo generation, AI sprint planning, and sprint summaries are implemented
+against the existing backend contract. AI-generated changes remain drafts
+until the user explicitly confirms them.
+
+## Known limitations
+
+The backend must be running to verify API flows. Browser-level focus-trap
+verification and real-provider AI verification require an interactive browser
+session and provider credentials; the frontend build and lint checks do not
+prove those external behaviors.
