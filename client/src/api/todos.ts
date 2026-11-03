@@ -5,6 +5,8 @@ import type {
   TodoListQuery,
   TodoListResponse,
   UpdateTodoRequest,
+  BulkCreateTodosRequest,
+  BulkCreateTodosResponse,
 } from '../types/api'
 import { request } from './client'
 
@@ -39,4 +41,8 @@ export function deleteTodo(todoId: string) {
 
 export function moveTodo(todoId: string, body: MoveTodoRequest) {
   return request<{ todo: Todo }>('POST', `/todos/${todoId}/move`, body)
+}
+
+export function bulkCreateTodos(projectId: string, body: BulkCreateTodosRequest) {
+  return request<BulkCreateTodosResponse>('POST', `/projects/${projectId}/todos/bulk`, body)
 }

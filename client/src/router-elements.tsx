@@ -1,17 +1,23 @@
 import { Link, Outlet, useLocation, useParams } from 'react-router'
-import { LayoutDashboard, ListChecks, LogOut, PanelsTopLeft, Rows3 } from 'lucide-react'
+import { Bot, LayoutDashboard, ListChecks, LogOut, PanelsTopLeft, Rows3 } from 'lucide-react'
 import { useAuth } from './features/auth/useAuth'
 import { useTheme } from './theme/useTheme'
 import { ThemeToggle } from './components/ThemeToggle'
 import { ProjectSwitcher } from './features/projects/ProjectSwitcher'
 import logo from './assets/logo/kanbot-logo.svg'
 import darkLogo from './assets/logo/kanbot-logo-dark.svg'
+import { AIAssistantDrawer, GenerateTodosDialog, PlanSprintDialog } from './features/ai/AIComponents'
+import { useAIStatus } from './hooks/useAI'
+import { useState } from 'react'
 
 export function AppShell() {
   const { projectId } = useParams()
   const { user, logout } = useAuth()
   const location = useLocation()
   const { resolvedTheme } = useTheme()
+  const [aiOpen, setAiOpen] = useState(false)
+  const [aiDialog, setAiDialog] = useState<'todos' | 'sprint' | null>(null)
+  useAIStatus()
   const inProject = Boolean(projectId)
   const navItems = projectId ? [
     { label: 'Backlog', icon: ListChecks, to: `/projects/${projectId}/backlog` },
@@ -36,10 +42,13 @@ export function AppShell() {
       <div className="lg:pl-72">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-surface/90 px-5 backdrop-blur sm:px-8">
           <div className="flex items-center gap-3"><PanelsTopLeft className="h-5 w-5 text-primary" aria-hidden="true" /><div><p className="text-sm font-extrabold text-foreground">{inProject ? 'Project workspace' : 'Projects'}</p><p className="hidden text-xs text-muted-foreground sm:block">{inProject ? 'Plan, prioritize, and make progress.' : 'Your personal workspaces.'}</p></div></div>
-          <div className="flex items-center gap-3"><ThemeToggle /><button type="button" onClick={logout} className="cursor-pointer rounded-lg p-2 text-muted-foreground hover:bg-background hover:text-foreground lg:hidden" aria-label="Log out"><LogOut className="h-4 w-4" /></button><span className="hidden text-xs text-muted-foreground sm:inline">{resolvedTheme === 'dark' ? 'Dark mode' : 'Light mode'}</span></div>
+          <div className="flex items-center gap-3">{inProject && <button type="button" onClick={() => setAiOpen(true)} className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary/10 px-3 text-xs font-extrabold text-primary hover:bg-primary/15"><Bot className="h-4 w-4" /> Ask AI</button>}<ThemeToggle /><button type="button" onClick={logout} className="cursor-pointer rounded-lg p-2 text-muted-foreground hover:bg-background hover:text-foreground lg:hidden" aria-label="Log out"><LogOut className="h-4 w-4" /></button><span className="hidden text-xs text-muted-foreground sm:inline">{resolvedTheme === 'dark' ? 'Dark mode' : 'Light mode'}</span></div>
         </header>
         <main><Outlet /></main>
       </div>
+      {projectId && aiOpen && <AIAssistantDrawer key={projectId} projectId={projectId} onClose={() => setAiOpen(false)} onGenerateTodos={() => { setAiOpen(false); setAiDialog('todos') }} onPlanSprint={() => { setAiOpen(false); setAiDialog('sprint') }} />}
+      {projectId && aiDialog === 'todos' && <GenerateTodosDialog projectId={projectId} onClose={() => setAiDialog(null)} />}
+      {projectId && aiDialog === 'sprint' && <PlanSprintDialog projectId={projectId} onClose={() => setAiDialog(null)} />}
     </div>
   )
 }
