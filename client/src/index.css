@@ -87,6 +87,48 @@ body {
   background: var(--kanbot-background);
   color: var(--kanbot-foreground);
   font-family: var(--kanbot-font-sans);
+}
+
+@layer components {
+  .markdown-content { overflow-wrap: anywhere; }
+  .markdown-content > :first-child { margin-top: 0; }
+  .markdown-content > :last-child { margin-bottom: 0; }
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3,
+  .markdown-content h4 { margin: 1.1em 0 0.45em; font-weight: 800; line-height: 1.25; }
+  .markdown-content h1 { font-size: 1.35em; }
+  .markdown-content h2 { font-size: 1.2em; }
+  .markdown-content h3 { font-size: 1.08em; }
+  .markdown-content p { margin: 0.65em 0; }
+  .markdown-content ul,
+  .markdown-content ol { margin: 0.65em 0; padding-left: 1.35em; }
+  .markdown-content ul { list-style: disc; }
+  .markdown-content ol { list-style: decimal; }
+  .markdown-content li { margin: 0.25em 0; }
+  .markdown-content li input[type='checkbox'] { margin-right: 0.45em; }
+  .markdown-content blockquote { margin: 0.9em 0; border-left: 3px solid var(--kanbot-primary); padding-left: 0.85em; color: var(--kanbot-muted-foreground); }
+  .markdown-content hr { margin: 1.2em 0; border-color: var(--kanbot-border); }
+  .markdown-content a { color: var(--kanbot-primary); text-decoration: underline; text-underline-offset: 2px; }
+  .markdown-inline-code { border: 1px solid var(--kanbot-border); border-radius: 0.35rem; background: var(--kanbot-background); padding: 0.12em 0.35em; font-size: 0.9em; }
+  .markdown-code-block pre { max-width: 100%; overflow-x: auto; margin: 0; padding: 1rem; background: var(--kanbot-background); font-size: 0.82rem; line-height: 1.6; }
+  .markdown-code-block code { display: block; min-width: max-content; }
+  .markdown-table-wrap { max-width: 100%; margin: 0.9em 0; overflow-x: auto; }
+  .markdown-content table { min-width: 100%; border-collapse: collapse; font-size: 0.9em; }
+  .markdown-content th,
+  .markdown-content td { border: 1px solid var(--kanbot-border); padding: 0.5rem 0.7rem; text-align: left; white-space: nowrap; }
+  .markdown-content th { background: var(--kanbot-background); font-weight: 800; }
+  .markdown-code-block .hljs-comment,
+  .markdown-code-block .hljs-quote { color: var(--kanbot-muted-foreground); }
+  .markdown-code-block .hljs-keyword,
+  .markdown-code-block .hljs-selector-tag,
+  .markdown-code-block .hljs-literal { color: var(--kanbot-primary); }
+  .markdown-code-block .hljs-string,
+  .markdown-code-block .hljs-title,
+  .markdown-code-block .hljs-name { color: var(--kanbot-secondary); }
+}
+
+body {
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
