@@ -7,6 +7,7 @@ import { z } from 'zod'
 import type { Sprint } from '../../types/api'
 import { ApiError, fieldErrors } from '../../api/client'
 import { useCompleteSprint, useCreateSprint, useDeleteSprint, useStartSprint, useUpdateSprint } from '../../hooks/useSprints'
+import { useGenerateSprintSummary } from '../../hooks/useAI'
 import { useToastStore } from '../../components/toast-store'
 
 const sprintSchema = z.object({
@@ -66,12 +67,14 @@ export function StartSprintDialog({ projectId, sprint, hasActiveSprint, onClose 
 
 export function CompleteSprintDialog({ projectId, sprint, plannedSprints, onClose }: { projectId: string; sprint: Sprint; plannedSprints: Sprint[]; onClose: () => void }) {
   const mutation = useCompleteSprint(projectId)
+  const summaryMutation = useGenerateSprintSummary(sprint.id)
   const navigate = useNavigate()
   const addToast = useToastStore((state) => state.addToast)
   const [destination, setDestination] = useState('backlog')
+  const [generateSummary, setGenerateSummary] = useState(false)
   const unfinished = sprint.stats.totalTodos - sprint.stats.doneTodos
-  const submit = async () => { try { await mutation.mutateAsync({ sprintId: sprint.id, body: { moveUnfinishedTo: destination } }); addToast('Sprint completed.'); onClose(); navigate(`/projects/${projectId}/sprints/${sprint.id}`) } catch (error) { addToast(error instanceof ApiError ? error.message : 'Unable to complete this sprint.', 'error') } }
-  return <Modal title={`Complete ${sprint.name}`} onClose={onClose}><div className="grid grid-cols-2 gap-3 text-sm"><Metric label="Completed todos" value={sprint.stats.doneTodos} /><Metric label="Unfinished todos" value={unfinished} /><Metric label="Total points" value={sprint.stats.totalPoints} /><Metric label="Completed points" value={sprint.stats.donePoints} /></div><label className="mt-5 block text-sm font-bold text-foreground">Move unfinished todos to<select value={destination} onChange={(event) => setDestination(event.target.value)} className={inputClass}><option value="backlog">Backlog</option>{plannedSprints.map((planned) => <option key={planned.id} value={planned.id}>{planned.name}</option>)}</select></label><p className="mt-3 text-xs text-muted-foreground">AI summary generation will be available when the AI-4 endpoint is connected.</p><DialogActions pending={mutation.isPending} onCancel={onClose} onConfirm={submit} label="Complete sprint" /></Modal>
+  const submit = async () => { try { await mutation.mutateAsync({ sprintId: sprint.id, body: { moveUnfinishedTo: destination } }); if (generateSummary) { try { await summaryMutation.mutateAsync() } catch { addToast('Sprint completed, but the AI summary could not be generated.', 'error') } } addToast('Sprint completed.'); onClose(); navigate(`/projects/${projectId}/sprints/${sprint.id}`) } catch (error) { addToast(error instanceof ApiError ? error.message : 'Unable to complete this sprint.', 'error') } }
+  return <Modal title={`Complete ${sprint.name}`} onClose={onClose}><div className="grid grid-cols-2 gap-3 text-sm"><Metric label="Completed todos" value={sprint.stats.doneTodos} /><Metric label="Unfinished todos" value={unfinished} /><Metric label="Total points" value={sprint.stats.totalPoints} /><Metric label="Completed points" value={sprint.stats.donePoints} /></div><label className="mt-5 block text-sm font-bold text-foreground">Move unfinished todos to<select value={destination} onChange={(event) => setDestination(event.target.value)} className={inputClass}><option value="backlog">Backlog</option>{plannedSprints.map((planned) => <option key={planned.id} value={planned.id}>{planned.name}</option>)}</select></label><label className="mt-4 flex items-center gap-2 text-sm font-bold text-foreground"><input type="checkbox" checked={generateSummary} onChange={(event) => setGenerateSummary(event.target.checked)} /> Generate AI summary</label><p className="mt-3 text-xs text-muted-foreground">AI can make mistakes. Review before saving.</p><DialogActions pending={mutation.isPending || summaryMutation.isPending} onCancel={onClose} onConfirm={submit} label="Complete sprint" /></Modal>
 }
 
 function SprintFields({ form }: { form: ReturnType<typeof useForm<SprintValues>> }) {
