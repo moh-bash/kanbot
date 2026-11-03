@@ -17,6 +17,8 @@ import { ApiError, fieldErrors } from '../../api/client'
 import { useCreateTodo, useBacklog, useMoveTodo } from '../../hooks/useBacklog'
 import { useProject } from '../../hooks/useProjects'
 import { TodoDetailsPanel } from '../todos/TodoDetailsPanel'
+import { CreateSprintDialog, EditSprintDialog, SprintActions } from '../sprints/SprintDialogs'
+import { useSprints } from '../../hooks/useSprints'
 
 const priorityOptions: Array<TodoPriority | ''> = ['', 'urgent', 'high', 'medium', 'low']
 const typeOptions: Array<TodoType | ''> = ['', 'task', 'story', 'bug']
@@ -29,10 +31,13 @@ export function BacklogPage() {
   const [priority, setPriority] = useState<TodoPriority | ''>('')
   const [type, setType] = useState<TodoType | ''>('')
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null)
+  const [createSprintOpen, setCreateSprintOpen] = useState(false)
+  const [editSprint, setEditSprint] = useState<import('../../types/api').Sprint | null>(null)
   const query = useMemo(() => ({ ...(debouncedSearch ? { search: debouncedSearch } : {}), ...(priority ? { priority } : {}), ...(type ? { type } : {}) }), [debouncedSearch, priority, type])
   const backlogQuery = useBacklog(projectId, query)
   const moveMutation = useMoveTodo(projectId, query)
   const createMutation = useCreateTodo(projectId)
+  const sprintsQuery = useSprints(projectId)
   const quickCreateRef = useRef<HTMLInputElement>(null)
   const [quickTitle, setQuickTitle] = useState('')
   const [quickError, setQuickError] = useState('')
@@ -81,19 +86,28 @@ export function BacklogPage() {
     <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:py-10">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div><div className="flex items-center gap-2 text-sm font-bold text-muted-foreground"><Link to="/projects" className="hover:text-primary">Projects</Link><span>/</span><span>{projectQuery.data?.project.key ?? 'Project'}</span></div><div className="mt-3 flex items-center gap-3"><h1 className="text-3xl font-extrabold tracking-tight text-foreground">Backlog</h1>{projectQuery.data?.project.key && <span className="rounded-md bg-primary/10 px-2 py-1 text-xs font-extrabold tracking-wider text-primary">{projectQuery.data.project.key}</span>}</div><p className="mt-2 text-sm text-muted-foreground">{projectQuery.data?.project.name ?? 'Your project'} · Everything you might work on next.</p></div>
-        <div className="flex gap-3"><button type="button" onClick={() => quickCreateRef.current?.focus()} className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-primary px-5 text-sm font-extrabold text-primary-foreground hover:bg-primary-hover focus:outline-none focus:ring-4 focus:ring-ring/25"><Plus className="h-4 w-4" /> Create todo</button></div>
+        <div className="flex flex-wrap gap-3"><button type="button" onClick={() => setCreateSprintOpen(true)} className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-border px-4 text-sm font-extrabold text-foreground hover:bg-surface"><Plus className="h-4 w-4" /> Create sprint</button><button type="button" onClick={() => quickCreateRef.current?.focus()} className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-primary px-5 text-sm font-extrabold text-primary-foreground hover:bg-primary-hover focus:outline-none focus:ring-4 focus:ring-ring/25"><Plus className="h-4 w-4" /> Create todo</button></div>
       </div>
       <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4"><Stat label="Backlog todos" value={todos.length} /><Stat label="Story points" value={totalPoints} /><Stat label="Showing" value={filtered ? `${todos.length} filtered` : 'All items'} /><Stat label="Project total" value={projectQuery.data?.project.stats.totalTodos ?? '—'} /></div>
       <div className="mt-8 flex flex-col gap-3 lg:flex-row lg:items-center"><div className="relative flex-1"><Search className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" aria-hidden="true" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search title, key, description, or labels…" className="h-11 w-full rounded-xl border border-border bg-surface pl-10 pr-10 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-ring/20" />{search && <button type="button" onClick={() => setSearch('')} className="absolute right-3 top-3 cursor-pointer text-muted-foreground hover:text-foreground" aria-label="Clear search"><X className="h-4 w-4" /></button>}</div><div className="flex gap-3"><FilterSelect label="Priority" value={priority} options={priorityOptions} onChange={setPriority} /><FilterSelect label="Type" value={type} options={typeOptions} onChange={setType} />{filtered && <button type="button" onClick={() => { setSearch(''); setPriority(''); setType('') }} className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-border px-3 text-sm font-bold text-muted-foreground hover:bg-surface hover:text-foreground"><X className="h-4 w-4" /> Clear</button>}</div></div>
       {filtered && <p className="mt-3 flex items-center gap-2 text-xs font-semibold text-muted-foreground"><ListFilter className="h-4 w-4" /> Reordering is disabled while search or filters are active.</p>}
+      <div className="mt-8 space-y-4">{(sprintsQuery.data?.sprints ?? []).filter((sprint) => sprint.status === 'planned').map((sprint) => <PlannedSprintSection key={sprint.id} projectId={projectId} sprint={sprint} plannedSprints={(sprintsQuery.data?.sprints ?? []).filter((item) => item.status === 'planned')} hasActiveSprint={(sprintsQuery.data?.sprints ?? []).some((item) => item.status === 'active')} onEdit={setEditSprint} />)}</div>
       {backlogQuery.isLoading && <SkeletonRows />}
       {backlogQuery.isError && <div className="mt-8 rounded-2xl border border-destructive/20 bg-destructive/5 p-10 text-center"><p className="font-extrabold text-foreground">Couldn’t load the backlog</p><button type="button" onClick={() => backlogQuery.refetch()} className="mt-4 cursor-pointer rounded-xl border border-border bg-surface px-4 py-2 text-sm font-bold text-foreground">Try again</button></div>}
       {!backlogQuery.isLoading && !backlogQuery.isError && todos.length === 0 && <EmptyBacklog filtered={filtered} onCreate={() => quickCreateRef.current?.focus()} />}
       {!backlogQuery.isLoading && !backlogQuery.isError && todos.length > 0 && <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}><SortableContext items={todos.map((todo) => todo.id)} strategy={verticalListSortingStrategy}><div className="mt-6 overflow-hidden rounded-2xl border border-border bg-surface">{todos.map((todo) => <SortableTodoRow key={todo.id} todo={todo} disabled={filtered} onOpen={() => setSelectedTodo(todo)} onMoveTo={moveTo} />)}</div></SortableContext></DndContext>}
       <div className="mt-4 rounded-2xl border border-dashed border-border bg-surface p-3">{quickError && <p className="mb-2 px-2 text-xs font-semibold text-destructive" role="alert">{quickError}</p>}<div className="flex items-center gap-3"><CirclePlus className="h-5 w-5 shrink-0 text-primary" /><input ref={quickCreateRef} value={quickTitle} onChange={(event) => setQuickTitle(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void createQuickTodo() } if (event.key === 'Escape') { setQuickTitle(''); setQuickError('') } }} placeholder="+ Create todo" disabled={createMutation.isPending} className="h-11 min-w-0 flex-1 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:text-muted-foreground" /><span className="hidden text-xs font-semibold text-muted-foreground sm:inline">Press Enter to add</span></div></div>
       {selectedTodo && <TodoDetailsPanel todo={selectedTodo} onClose={() => setSelectedTodo(null)} onDeleted={() => setSelectedTodo(null)} />}
+      {createSprintOpen && <CreateSprintDialog projectId={projectId} onClose={() => setCreateSprintOpen(false)} />}
+      {editSprint && <EditSprintDialog projectId={projectId} sprint={editSprint} onClose={() => setEditSprint(null)} />}
     </div>
   )
+}
+
+function PlannedSprintSection({ projectId, sprint, plannedSprints, hasActiveSprint, onEdit }: { projectId: string; sprint: import('../../types/api').Sprint; plannedSprints: import('../../types/api').Sprint[]; hasActiveSprint: boolean; onEdit: (sprint: import('../../types/api').Sprint) => void }) {
+  const [open, setOpen] = useState(true)
+  const todosQuery = useBacklog(projectId, { sprintId: sprint.id })
+  return <section className="overflow-hidden rounded-2xl border border-primary/20 bg-primary/[0.03]"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary/10 px-4 py-4 sm:px-5"><button type="button" onClick={() => setOpen((value) => !value)} className="flex min-w-0 cursor-pointer items-center gap-3 text-left"><ChevronDown className={`h-5 w-5 shrink-0 text-primary transition-transform ${open ? '' : '-rotate-90'}`} /><div><h2 className="truncate text-base font-extrabold text-foreground">{sprint.name}</h2><p className="mt-1 text-xs font-semibold text-muted-foreground">{sprint.goal || 'No sprint goal'} · {sprint.stats.totalTodos} todos · {sprint.stats.totalPoints} points</p></div></button><SprintActions projectId={projectId} sprint={sprint} hasActiveSprint={hasActiveSprint} plannedSprints={plannedSprints} onEdit={() => onEdit(sprint)} onDeleted={() => undefined} /></div>{open && <div className="p-3">{todosQuery.isLoading && <p className="p-4 text-sm text-muted-foreground">Loading sprint todos…</p>}{todosQuery.isError && <p className="p-4 text-sm text-destructive">Unable to load sprint todos.</p>}{todosQuery.data?.todos.map((todo) => <button key={todo.id} type="button" className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-3 text-left hover:bg-surface"><span className="text-xs font-extrabold text-primary">{todo.key}</span><span className="truncate text-sm font-bold text-foreground">{todo.title}</span><span className="ml-auto text-xs font-bold capitalize text-muted-foreground">{todo.status.replace('_', ' ')}</span></button>)}</div>}</section>
 }
 
 function SortableTodoRow({ todo, disabled, onOpen, onMoveTo }: { todo: Todo; disabled: boolean; onOpen: () => void; onMoveTo: (todo: Todo, position: number) => void }) {
