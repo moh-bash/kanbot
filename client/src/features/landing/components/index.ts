@@ -1,0 +1,10 @@
+export { LandingNav } from "./LandingNav";
+export { HeroSection } from "./HeroSection";
+export { ValueProposition } from "./ValueProposition";
+export { CoreWorkflow } from "./CoreWorkflow";
+export { BacklogShowcase } from "./BacklogShowcase";
+export { BoardShowcase } from "./BoardShowcase";
+export { AICapabilities } from "./AICapabilities";
+export { ProductivitySection } from "./ProductivitySection";
+export { FinalCTA } from "./FinalCTA";
+export { LandingFooter } from "./LandingFooter";
