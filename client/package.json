@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"package.json\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"package.json\"",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -18,6 +20,7 @@
     "@tanstack/react-query": "^5.105.1",
     "axios": "^1.21.0",
     "date-fns": "^4.4.0",
+    "gsap": "^3.15.0",
     "highlight.js": "^11.12.0",
     "lucide-react": "^1.66.0",
     "react": "^19.3.1",
@@ -41,6 +44,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
     "globals": "^17.13.0",
+    "prettier": "^3.9.10",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.0",
     "vite": "^8.3.5"

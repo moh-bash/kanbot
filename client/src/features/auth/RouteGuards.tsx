@@ -1,27 +1,32 @@
-import { Navigate, Outlet, useLocation } from 'react-router'
-import { useAuth } from './useAuth'
+import { Navigate, Outlet, useLocation } from "react-router";
+import { useAuth } from "./useAuth";
 
 export function ProtectedRoute() {
-  const { isLoading, user } = useAuth()
-  const location = useLocation()
+  const { isLoading, user } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
-    return <FullPageLoader />
+    return <FullPageLoader />;
   }
   if (!user) {
-    const redirect = `${location.pathname}${location.search}`
-    return <Navigate to={`/login?redirect=${encodeURIComponent(redirect)}`} replace />
+    const redirect = `${location.pathname}${location.search}`;
+    return (
+      <Navigate
+        to={`/login?redirect=${encodeURIComponent(redirect)}`}
+        replace
+      />
+    );
   }
-  return <Outlet />
+  return <Outlet />;
 }
 
 export function GuestRoute() {
-  const { isLoading, user } = useAuth()
+  const { isLoading, user } = useAuth();
 
   if (isLoading) {
-    return <FullPageLoader />
+    return <FullPageLoader />;
   }
-  return user ? <Navigate to="/projects" replace /> : <Outlet />
+  return user ? <Navigate to="/projects" replace /> : <Outlet />;
 }
 
 function FullPageLoader() {
@@ -32,5 +37,5 @@ function FullPageLoader() {
         Checking your session…
       </div>
     </main>
-  )
+  );
 }

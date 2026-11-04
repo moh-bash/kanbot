@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -6,59 +7,140 @@
   --font-sans: var(--kanbot-font-sans);
   --color-background: var(--kanbot-background);
   --color-surface: var(--kanbot-surface);
+  --color-surface-elevated: var(--kanbot-surface-elevated);
+  --color-surface-hover: var(--kanbot-surface-hover);
   --color-primary: var(--kanbot-primary);
   --color-primary-foreground: var(--kanbot-primary-foreground);
+  --color-primary-hover: var(--kanbot-primary-hover);
+  --color-primary-subtle: var(--kanbot-primary-subtle);
+  --color-brand-indigo: var(--kanbot-brand-indigo);
+  --color-brand-indigo-hover: var(--kanbot-brand-indigo-hover);
+  --color-brand-indigo-subtle: var(--kanbot-brand-indigo-subtle);
   --color-secondary: var(--kanbot-secondary);
+  --color-secondary-hover: var(--kanbot-secondary-hover);
+  --color-secondary-subtle: var(--kanbot-secondary-subtle);
+  --color-accent-amber: var(--kanbot-accent-amber);
+  --color-accent-amber-subtle: var(--kanbot-accent-amber-subtle);
   --color-foreground: var(--kanbot-foreground);
-  --color-muted-foreground: var(--kanbot-muted-foreground);
+  --color-foreground-muted: var(--kanbot-foreground-muted);
+  --color-foreground-subtle: var(--kanbot-foreground-subtle);
   --color-border: var(--kanbot-border);
+  --color-border-subtle: var(--kanbot-border-subtle);
   --color-success: var(--kanbot-success);
   --color-warning: var(--kanbot-warning);
   --color-destructive: var(--kanbot-destructive);
+  --color-destructive-hover: var(--kanbot-destructive-hover);
+  --color-destructive-subtle: var(--kanbot-destructive-subtle);
   --color-input: var(--kanbot-input);
   --color-ring: var(--kanbot-ring);
-  --color-primary-hover: var(--kanbot-primary-hover);
-  --color-secondary-hover: var(--kanbot-secondary-hover);
   --color-disabled: var(--kanbot-disabled);
+  --color-muted-foreground: var(--kanbot-foreground-muted);
 }
 
+/* Light Theme - Refined neutral palette with strategic brand accents */
 :root {
-  --kanbot-font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --kanbot-background: #f8fafc;
+  --kanbot-font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  --kanbot-font-display: "Manrope", "Inter", ui-sans-serif, sans-serif;
+  --kanbot-font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Backgrounds & Surfaces */
+  --kanbot-background: #f7f7f8;
   --kanbot-surface: #ffffff;
-  --kanbot-primary: #4f46e5;
+  --kanbot-surface-elevated: #ffffff;
+  --kanbot-surface-hover: #f1f3f5;
+
+  /* Primary Brand - Electric Blue */
+  --kanbot-primary: #1868db;
+  --kanbot-primary-hover: #0c55bd;
+  --kanbot-primary-subtle: rgba(24, 104, 219, 0.09);
   --kanbot-primary-foreground: #ffffff;
+
+  /* Brand Indigo - Logo identity */
+  --kanbot-brand-indigo: #625fff;
+  --kanbot-brand-indigo-hover: #514ef0;
+  --kanbot-brand-indigo-subtle: rgba(98, 95, 255, 0.09);
+
+  /* Secondary - Success Green */
   --kanbot-secondary: #22c55e;
-  --kanbot-foreground: #111827;
-  --kanbot-muted-foreground: #64748b;
-  --kanbot-border: #e2e8f0;
-  --kanbot-success: #16a34a;
-  --kanbot-warning: #d97706;
-  --kanbot-destructive: #dc2626;
-  --kanbot-input: #ffffff;
-  --kanbot-ring: #818cf8;
-  --kanbot-primary-hover: #4338ca;
   --kanbot-secondary-hover: #16a34a;
+  --kanbot-secondary-subtle: rgba(34, 197, 94, 0.08);
+
+  /* Accent - Warm Amber for highlights */
+  --kanbot-accent-amber: #f1ba40;
+  --kanbot-accent-amber-subtle: rgba(241, 186, 64, 0.12);
+
+  /* Text */
+  --kanbot-foreground: #202123;
+  --kanbot-foreground-muted: #6b6f76;
+  --kanbot-foreground-subtle: #6b6f76;
+
+  /* Borders */
+  --kanbot-border: #e5e7eb;
+  --kanbot-border-subtle: #f0f1f2;
+
+  /* Status Colors */
+  --kanbot-success: #22c55e;
+  --kanbot-warning: #f59e0b;
+  --kanbot-destructive: #dc2626;
+  --kanbot-destructive-hover: #b91c1c;
+  --kanbot-destructive-subtle: rgba(220, 38, 38, 0.08);
+
+  /* Input & Focus */
+  --kanbot-input: #ffffff;
+  --kanbot-ring: #0053ef;
   --kanbot-disabled: #cbd5e1;
 }
 
+/* Dark Theme - Near-black foundation with refined surface layering */
 :root.dark {
-  --kanbot-background: #0b1020;
-  --kanbot-surface: #111827;
-  --kanbot-primary: #6366f1;
+  /* Near-black base with strategic layering */
+  --kanbot-background: #0b0c0e;
+  --kanbot-surface: #0e111b;
+  --kanbot-surface-elevated: #0d172b;
+  --kanbot-surface-hover: #12244f;
+
+  /* Primary Brand - Lighter for contrast on dark */
+  --kanbot-primary: #4d8dff;
+  --kanbot-primary-hover: #76a8ff;
+  --kanbot-primary-subtle: rgba(24, 104, 219, 0.16);
   --kanbot-primary-foreground: #ffffff;
+
+  /* Brand Indigo */
+  --kanbot-brand-indigo: #6366f1;
+  --kanbot-brand-indigo-hover: #818cf8;
+  --kanbot-brand-indigo-subtle: rgba(99, 102, 241, 0.12);
+
+  /* Secondary - Success Green */
   --kanbot-secondary: #22c55e;
-  --kanbot-foreground: #f9fafb;
-  --kanbot-muted-foreground: #9ca3af;
-  --kanbot-border: #374151;
-  --kanbot-success: #22c55e;
-  --kanbot-warning: #f59e0b;
-  --kanbot-destructive: #f87171;
-  --kanbot-input: #1f2937;
-  --kanbot-ring: #818cf8;
-  --kanbot-primary-hover: #818cf8;
   --kanbot-secondary-hover: #4ade80;
-  --kanbot-disabled: #4b5563;
+  --kanbot-secondary-subtle: rgba(34, 197, 94, 0.12);
+
+  /* Accent - Warm Amber */
+  --kanbot-accent-amber: #fbc44d;
+  --kanbot-accent-amber-subtle: rgba(251, 196, 77, 0.12);
+
+  /* Text - High contrast cool grays */
+  --kanbot-foreground: #ffffff;
+  --kanbot-foreground-muted: #abaebb;
+  --kanbot-foreground-subtle: #c7c9d1;
+
+  /* Borders - Subtle separation */
+  --kanbot-border: #172540;
+  --kanbot-border-subtle: rgba(23, 37, 64, 0.7);
+
+  /* Status Colors */
+  --kanbot-success: #22c55e;
+  --kanbot-warning: #fbc44d;
+  --kanbot-destructive: #ef4444;
+  --kanbot-destructive-hover: #f87171;
+  --kanbot-destructive-subtle: rgba(239, 68, 68, 0.12);
+
+  /* Input & Focus */
+  --kanbot-input: #0f1419;
+  --kanbot-ring: #0053ef;
+  --kanbot-disabled: #334155;
 }
 
 * {
@@ -87,60 +169,191 @@ body {
   background: var(--kanbot-background);
   color: var(--kanbot-foreground);
   font-family: var(--kanbot-font-sans);
+  font-feature-settings: "cv05", "cv11";
+  letter-spacing: -0.011em;
+  font-weight: 500;
 }
 
 @layer components {
-  .markdown-content { overflow-wrap: anywhere; }
-  .markdown-content > :first-child { margin-top: 0; }
-  .markdown-content > :last-child { margin-bottom: 0; }
+  /* Refined Markdown Rendering for AI Assistant */
+  .markdown-content {
+    overflow-wrap: anywhere;
+    line-height: 1.65;
+  }
+
+  .markdown-content > :first-child {
+    margin-top: 0;
+  }
+  .markdown-content > :last-child {
+    margin-bottom: 0;
+  }
+
   .markdown-content h1,
   .markdown-content h2,
   .markdown-content h3,
-  .markdown-content h4 { margin: 1.1em 0 0.45em; font-weight: 800; line-height: 1.25; }
-  .markdown-content h1 { font-size: 1.35em; }
-  .markdown-content h2 { font-size: 1.2em; }
-  .markdown-content h3 { font-size: 1.08em; }
-  .markdown-content p { margin: 0.65em 0; }
+  .markdown-content h4 {
+    margin: 1.5em 0 0.6em;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .markdown-content h1 {
+    font-size: 1.5em;
+    font-weight: 800;
+  }
+  .markdown-content h2 {
+    font-size: 1.25em;
+    font-weight: 700;
+  }
+  .markdown-content h3 {
+    font-size: 1.1em;
+    font-weight: 700;
+  }
+
+  .markdown-content p {
+    margin: 0.75em 0;
+    line-height: 1.7;
+  }
+
   .markdown-content ul,
-  .markdown-content ol { margin: 0.65em 0; padding-left: 1.35em; }
-  .markdown-content ul { list-style: disc; }
-  .markdown-content ol { list-style: decimal; }
-  .markdown-content li { margin: 0.25em 0; }
-  .markdown-content li input[type='checkbox'] { margin-right: 0.45em; }
-  .markdown-content blockquote { margin: 0.9em 0; border-left: 3px solid var(--kanbot-primary); padding-left: 0.85em; color: var(--kanbot-muted-foreground); }
-  .markdown-content hr { margin: 1.2em 0; border-color: var(--kanbot-border); }
-  .markdown-content a { color: var(--kanbot-primary); text-decoration: underline; text-underline-offset: 2px; }
-  .markdown-inline-code { border: 1px solid var(--kanbot-border); border-radius: 0.35rem; background: var(--kanbot-background); padding: 0.12em 0.35em; font-size: 0.9em; }
-  .markdown-code-block pre { max-width: 100%; overflow-x: auto; margin: 0; padding: 1rem; background: var(--kanbot-background); font-size: 0.82rem; line-height: 1.6; }
-  .markdown-code-block code { display: block; min-width: max-content; }
-  .markdown-table-wrap { max-width: 100%; margin: 0.9em 0; overflow-x: auto; }
-  .markdown-content table { min-width: 100%; border-collapse: collapse; font-size: 0.9em; }
+  .markdown-content ol {
+    margin: 0.75em 0;
+    padding-left: 1.5em;
+  }
+
+  .markdown-content ul {
+    list-style: disc;
+  }
+  .markdown-content ol {
+    list-style: decimal;
+  }
+
+  .markdown-content li {
+    margin: 0.3em 0;
+    line-height: 1.65;
+  }
+
+  .markdown-content li input[type="checkbox"] {
+    margin-right: 0.5em;
+  }
+
+  .markdown-content blockquote {
+    margin: 1em 0;
+    border-left: 3px solid var(--kanbot-primary);
+    padding-left: 1em;
+    color: var(--kanbot-foreground-muted);
+    font-style: italic;
+  }
+
+  .markdown-content hr {
+    margin: 1.5em 0;
+    border-color: var(--kanbot-border);
+  }
+
+  .markdown-content a {
+    color: var(--kanbot-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease;
+  }
+
+  .markdown-content a:hover {
+    color: var(--kanbot-primary-hover);
+  }
+
+  .markdown-inline-code {
+    border: 1px solid var(--kanbot-border);
+    border-radius: 6px;
+    background: var(--kanbot-surface-hover);
+    padding: 0.15em 0.4em;
+    font-size: 0.88em;
+    font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+    font-weight: 500;
+  }
+
+  .markdown-code-block {
+    margin: 1em 0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .markdown-code-block pre {
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 0;
+    padding: 1.25rem;
+    background: var(--kanbot-input);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+  }
+
+  .markdown-code-block code {
+    display: block;
+    min-width: max-content;
+  }
+
+  .markdown-table-wrap {
+    max-width: 100%;
+    margin: 1em 0;
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--kanbot-border);
+  }
+
+  .markdown-content table {
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+  }
+
   .markdown-content th,
-  .markdown-content td { border: 1px solid var(--kanbot-border); padding: 0.5rem 0.7rem; text-align: left; white-space: nowrap; }
-  .markdown-content th { background: var(--kanbot-background); font-weight: 800; }
+  .markdown-content td {
+    border: 1px solid var(--kanbot-border);
+    padding: 0.65rem 0.85rem;
+    text-align: left;
+  }
+
+  .markdown-content th {
+    background: var(--kanbot-surface-hover);
+    font-weight: 700;
+  }
+
   .markdown-code-block .hljs-comment,
-  .markdown-code-block .hljs-quote { color: var(--kanbot-muted-foreground); }
+  .markdown-code-block .hljs-quote {
+    color: var(--kanbot-foreground-subtle);
+  }
+
   .markdown-code-block .hljs-keyword,
   .markdown-code-block .hljs-selector-tag,
-  .markdown-code-block .hljs-literal { color: var(--kanbot-primary); }
+  .markdown-code-block .hljs-literal {
+    color: var(--kanbot-primary);
+  }
+
   .markdown-code-block .hljs-string,
   .markdown-code-block .hljs-title,
-  .markdown-code-block .hljs-name { color: var(--kanbot-secondary); }
+  .markdown-code-block .hljs-name {
+    color: var(--kanbot-secondary);
+  }
 }
 
 body {
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Enhanced focus visible states */
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--kanbot-ring) 55%, transparent);
+  outline: 2px solid var(--kanbot-ring);
   outline-offset: 2px;
+  transition: outline-offset 0.15s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -166,5 +379,70 @@ a {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--kanbot-primary) 22%, transparent);
+  background: var(--kanbot-primary-subtle);
+  color: var(--kanbot-foreground);
+}
+
+/* Utility classes */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass-surface {
+    background: var(--kanbot-surface);
+    border: 1px solid var(--kanbot-border);
+  }
+
+  .transition-smooth {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .transition-spring {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+/* Product surfaces */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--kanbot-font-display);
+  letter-spacing: -0.035em;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+button:not(:disabled):active {
+  transform: translateY(1px);
+}
+
+input,
+textarea,
+select {
+  border-color: var(--kanbot-border);
+  background: var(--kanbot-input);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--kanbot-foreground-subtle);
+}
+
+main {
+  background: var(--kanbot-background);
 }

@@ -2,33 +2,33 @@ import type {
   CreateProjectRequest,
   ProjectWithStats,
   UpdateProjectRequest,
-} from '../types/api'
-import { request } from './client'
+} from "../types/api";
+import { request } from "./client";
 
 export interface ProjectsResponse {
-  projects: ProjectWithStats[]
+  projects: ProjectWithStats[];
 }
 
 export interface ProjectResponse {
-  project: ProjectWithStats
+  project: ProjectWithStats;
 }
 
 export function listProjects() {
-  return request<ProjectsResponse>('GET', '/projects')
+  return request<ProjectsResponse>("GET", "/projects");
 }
 
 export function getProject(projectId: string) {
-  return request<ProjectResponse>('GET', `/projects/${projectId}`)
+  return request<ProjectResponse>("GET", `/projects/${projectId}`);
 }
 
 export function createProject(body: CreateProjectRequest) {
-  return request<ProjectResponse>('POST', '/projects', body)
+  return request<ProjectResponse>("POST", "/projects", body);
 }
 
 export function updateProject(projectId: string, body: UpdateProjectRequest) {
-  return request<ProjectResponse>('PATCH', `/projects/${projectId}`, body)
+  return request<ProjectResponse>("PATCH", `/projects/${projectId}`, body);
 }
 
 export function deleteProject(projectId: string) {
-  return request<void>('DELETE', `/projects/${projectId}`)
+  return request<void>("DELETE", `/projects/${projectId}`);
 }
