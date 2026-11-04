@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { Link, useLocation, useParams } from "react-router";
+import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { useState } from "react";
 import { useProject } from "../hooks/useProjects";
 import { ProjectDialog } from "../features/projects/ProjectDialog";
@@ -26,10 +26,10 @@ export function PageHeader({
   actions = [],
 }: PageHeaderProps) {
   return (
-    <div className="border-b border-border bg-surface px-5 py-5 sm:px-8 lg:py-6">
-      <div className="mx-auto w-full max-w-[1500px]">
+    <div className="border-b border-border bg-surface px-4 py-3 sm:px-8">
+      <div className="mx-auto flex w-full max-w-[1500px] items-center justify-between gap-3">
         {breadcrumbs && breadcrumbs.length > 0 && (
-          <nav className="mb-3 flex items-center gap-2 text-sm font-bold text-muted-foreground">
+          <nav className="absolute mt-[-2.5rem] hidden items-center gap-2 text-xs font-bold text-muted-foreground sm:flex">
             {breadcrumbs.map((crumb, index) => (
               <span key={index} className="flex items-center gap-2">
                 {crumb.to ? (
@@ -45,26 +45,26 @@ export function PageHeader({
           </nav>
         )}
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0 flex-1">
-            <h1 className="truncate text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="min-w-0">
+            <h1 className="truncate text-xl font-extrabold tracking-tight text-foreground sm:text-2xl">
               {title}
             </h1>
             {description && (
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="hidden truncate text-xs text-muted-foreground sm:block">
                 {description}
               </p>
             )}
           </div>
 
           {actions.length > 0 && (
-            <div className="flex flex-wrap gap-2 sm:gap-3">
+            <div className="flex shrink-0 gap-2">
               {actions.map((action, index) => (
                 <button
                   key={index}
                   type="button"
                   onClick={action.onClick}
-                  className={`inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg px-4 text-sm font-bold transition-smooth focus:outline-none focus:ring-2 focus:ring-ring sm:h-11 ${
+                  className={`inline-flex h-10 cursor-pointer items-center gap-2 rounded-lg px-4 text-sm font-bold transition-smooth focus:outline-none focus:ring-2 focus:ring-ring                   sm:h-10 ${
                     action.variant === "primary"
                       ? "bg-primary text-primary-foreground hover:bg-primary-hover"
                       : "border border-border text-foreground hover:bg-surface-hover"
@@ -85,11 +85,11 @@ export function PageHeader({
 // Smart page header that automatically resolves context-aware actions
 export function SmartPageHeader() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { projectId } = useParams();
   const projectQuery = useProject(projectId);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
   const [createSprintOpen, setCreateSprintOpen] = useState(false);
-  const [createTodoFocused, setCreateTodoFocused] = useState(false);
 
   const project = projectQuery.data?.project;
 
@@ -98,7 +98,7 @@ export function SmartPageHeader() {
   const isProjectsPage = path === "/projects";
   const isBacklogPage = path.includes("/backlog");
   const isBoardPage = path.includes("/board");
-  const isSprintsPage = path.includes("/sprints") && !path.match(/\/sprints\/[^/]+$/);
+  const isSprintsPage = path.includes("/sprints");
   const isProfilePage = path === "/profile";
 
   // Build breadcrumbs
@@ -144,14 +144,10 @@ export function SmartPageHeader() {
     actions.push({
       label: "Create Task",
       icon: <Plus className="h-4 w-4" />,
-      onClick: () => {
-        // Trigger focus on quick create input
-        setCreateTodoFocused(true);
-        // Scroll to backlog if we're on board and backlog is in the page
-        if (isBoardPage) {
-          window.location.href = `/projects/${projectId}/backlog`;
-        }
-      },
+      onClick: () =>
+        navigate(`/projects/${projectId}/backlog?create=1`, {
+          state: { focusCreate: true },
+        }),
       variant: "primary",
     });
   } else if (isSprintsPage) {
