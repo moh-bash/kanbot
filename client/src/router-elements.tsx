@@ -21,6 +21,7 @@ import type { ChatMessage, Todo } from "./types/api";
 import { ShortcutHelpDialog } from "./features/keyboard/ShortcutHelpDialog";
 import { useKeyboardShortcuts } from "./features/keyboard/useKeyboardShortcuts";
 import { CommandPalette } from "./features/command-palette/CommandPalette";
+import { PWAStatus } from "./components/PWAStatus";
 
 export function AppShell() {
   const { projectId } = useParams();
@@ -178,6 +179,7 @@ export function AppShell() {
         </header>
 
         <main>
+          <PWAStatus />
           <Outlet />
         </main>
       </div>
